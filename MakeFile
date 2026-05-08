@@ -1,0 +1,16 @@
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -O2
+TARGET = mydb.exe
+SOURCES = main.cpp BPlusTree.cpp global.cpp Transaction.cpp db.cpp parser.cpp
+HEADERS = BPlusTree.h global.h Transaction.h db.h parser.h
+
+$(TARGET): $(SOURCES) $(HEADERS)
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET)
+
+clean:
+	rm -f $(TARGET) *.o
+
+run: $(TARGET)
+	./$(TARGET)
+
+.PHONY: clean run

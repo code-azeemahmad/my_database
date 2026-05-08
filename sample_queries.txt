@@ -1,0 +1,132 @@
+-- Company Database Demo
+
+-- 1. Create and use database
+CREATE DATABASE company;
+USE company;
+
+-- 2. Create tables
+CREATE TABLE departments (dept_id INT PRIMARY KEY, dept_name STRING(50) NOT_NULL, location STRING(50));
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY, 
+    emp_name STRING(50) NOT_NULL, 
+    dept_id INT FOREIGN KEY REFERENCES departments(dept_id), 
+    salary INT, 
+    hire_date STRING(20)
+);
+
+CREATE TABLE projects (
+    proj_id INT PRIMARY KEY, 
+    proj_name STRING(50) NOT_NULL, 
+    dept_id INT FOREIGN KEY REFERENCES departments(dept_id), 
+    budget INT
+);
+
+CREATE TABLE assignments (
+    assign_id INT PRIMARY KEY, 
+    emp_id INT FOREIGN KEY REFERENCES employees(emp_id), 
+    proj_id INT FOREIGN KEY REFERENCES projects(proj_id), 
+    hours INT
+);
+
+-- 3. Create indexes
+CREATE INDEX ON employees(dept_id);
+CREATE INDEX ON projects(dept_id);
+CREATE INDEX ON employees(emp_id);
+CREATE INDEX ON projects(proj_id);
+
+-- 4. Insert data - Departments
+INSERT INTO departments VALUES (1, "Engineering", "New York");
+INSERT INTO departments VALUES (2, "HR", "Chicago");
+INSERT INTO departments VALUES (3, "Marketing", "San Francisco");
+INSERT INTO departments VALUES (4, "Finance", "Boston");
+
+-- 5. Insert data - Employees
+INSERT INTO employees VALUES (101, "John Smith", 1, 85000, "2020-01-15");
+INSERT INTO employees VALUES (102, "Emma Johnson", 1, 92000, "2019-03-20");
+INSERT INTO employees VALUES (103, "Michael Brown", 2, 65000, "2021-06-10");
+INSERT INTO employees VALUES (104, "Sophia Davis", 3, 78000, "2020-11-05");
+INSERT INTO employees VALUES (105, "William Wilson", 4, 88000, "2018-09-12");
+INSERT INTO employees VALUES (106, "Olivia Martinez", 3, 72000, "2022-01-08");
+
+-- 6. Insert data - Projects
+INSERT INTO projects VALUES (201, "Web App Redesign", 1, 150000);
+INSERT INTO projects VALUES (202, "Mobile App", 1, 200000);
+INSERT INTO projects VALUES (203, "Recruitment System", 2, 50000);
+INSERT INTO projects VALUES (204, "Social Media Campaign", 3, 75000);
+INSERT INTO projects VALUES (205, "Financial Audit", 4, 100000);
+
+-- 7. Insert data - Assignments
+INSERT INTO assignments VALUES (301, 101, 201, 40);
+INSERT INTO assignments VALUES (302, 102, 201, 35);
+INSERT INTO assignments VALUES (303, 101, 202, 20);
+INSERT INTO assignments VALUES (304, 104, 204, 45);
+INSERT INTO assignments VALUES (305, 105, 205, 38);
+INSERT INTO assignments VALUES (306, 106, 204, 30);
+
+-- 8. Query examples
+
+-- Find all employees
+FIND * FROM employees;
+
+-- Find employees with salary > 75000
+FIND * FROM employees WHERE salary > 75000;
+
+-- Find engineering employees
+FIND emp_name, salary FROM employees WHERE dept_id = 1;
+
+-- Find employees with salary between 70000 and 90000
+FIND * FROM employees WHERE salary >= 70000 AND salary <= 90000;
+
+-- Update employee salary
+UPDATE employees SET salary = 90000 WHERE emp_id = 101;
+
+-- Transaction example
+BEGIN;
+UPDATE employees SET salary = 95000 WHERE emp_id = 102;
+UPDATE employees SET salary = 70000 WHERE emp_id = 103;
+COMMIT;
+
+-- Delete an assignment
+KILL FROM assignments WHERE emp_id = 101 AND hours > 30;
+
+-- Show all tables
+SHOW TABLES;
+
+-- Describe table structure
+DESCRIBE employees;
+
+
+___________________________________________
+
+-- Run these commands in order:
+
+USE company;
+FIND * FROM employees WHERE salary > 80000;
+UPDATE employees SET salary = 100000 WHERE emp_id = 101;
+FIND * FROM employees WHERE emp_id = 101;
+BEGIN;
+KILL FROM assignments WHERE emp_id = 101;
+ROLLBACK;
+FIND * FROM assignments;  -- Should still have the records
+
+
+
+
+______________________________________________________________
+
+# 1. Create a new directory
+mkdir CustomDBMS
+cd CustomDBMS
+
+# 2. Create all the files above with their exact names
+
+# 3. Compile
+g++ main.cpp BPlusTree.cpp global.cpp Transaction.cpp db.cpp parser.cpp -o mydb.exe -std=c++17
+
+# 4. Run
+./mydb.exe
+
+# Or use the Makefile:
+make
+make run
